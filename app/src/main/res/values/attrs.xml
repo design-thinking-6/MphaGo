@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimeView">
+        <attr name="max_time" format="integer"/>
+        <attr name="time" format="integer"/>
+        <attr name="lock" format="boolean"/>
+    </declare-styleable>
+</resources>
