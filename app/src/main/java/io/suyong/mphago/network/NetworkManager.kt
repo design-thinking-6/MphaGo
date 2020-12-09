@@ -3,34 +3,48 @@ package io.suyong.mphago.network
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONObject
 import java.lang.Exception
 
 object NetworkManager {
-    private const val SERVER_URL = ""
+    const val SERVER_URL = "http://10.0.2.2:3000"
+    const val IMAGE_SERVER_URL = "http://mphago.suyong.me/images/"
+
     private var errorCallback: (any: Exception) -> Unit = {}
     private var queue: RequestQueue? = null
+
+    private var id: String = ""
+    private var password: String = ""
 
     enum class Event(val event: String) {
         ERROR("error")
     }
 
-    enum class Operation(val method: Int, val url: String) {
-        CREATE_USER(Request.Method.POST, "/v1/users"),
-        READ_USER(Request.Method.GET, "/v1/users"),
-        UPDATE_USER(Request.Method.PATCH, "/v1/users"),
-        DELETE_USER(Request.Method.DELETE, "/v1/users")
-    }
-
-    fun request(operation: Operation, func: (response: String?) -> Unit) {
+    fun request(method: Int, url: String, jsonObject: JSONObject?, func: (response: Any?) -> Unit, error: (error: Exception) -> Unit) {
         queue?.let {
-            val request = StringRequest(
-                operation.method,
-                "$SERVER_URL${operation.url}",
-                func,
-                errorCallback
-            )
+            val request = when (method) {
+                Request.Method.POST -> JsonObjectRequest(
+                    "$SERVER_URL/$url",
+                    jsonObject,
+                    func,
+                    {
+                        errorCallback(it)
+                        error(it)
+                    }
+                )
+                else -> StringRequest(
+                    method,
+                    "$SERVER_URL/$url",
+                    func,
+                    {
+                        errorCallback(it)
+                        error(it)
+                    }
+                )
+            }
 
             it.add(request)
         }
@@ -41,7 +55,7 @@ object NetworkManager {
     }
 
     fun on(event: Event, callback: (any: Any) -> Unit) = on(event.event, callback)
-    fun on(event: String, callback: (any: Any) -> Unit) = when(event) {
+    fun on(event: String, callback: (any: Any) -> Unit) = when (event) {
         Event.ERROR.event -> onError(callback)
         else -> Unit
     }
