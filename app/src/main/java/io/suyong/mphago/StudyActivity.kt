@@ -2,14 +2,18 @@ package io.suyong.mphago
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import io.suyong.mphago.adapter.HintAdapter
 import io.suyong.mphago.adapter.HintType
 import io.suyong.mphago.adapter.HintViewHolder
 import kotlinx.android.synthetic.main.activity_study.*
+import kotlinx.android.synthetic.main.layout_answer.view.*
 
 class StudyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +29,9 @@ class StudyActivity : AppCompatActivity() {
 
             }
         }
+
+        val child = LayoutInflater.from(this).inflate(R.layout.layout_choice_answer, answer_layout as ConstraintLayout, false)
+        answer_layout.bottom_sheet_child_layout.addView(child)
 
         hintRecyclerView.adapter = adapter
         hintRecyclerView.layoutManager = LinearLayoutManager(this)
