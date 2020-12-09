@@ -1,5 +1,6 @@
 package io.suyong.mphago
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -15,16 +16,21 @@ import kotlin.math.roundToInt
 
 class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
     var isLock: Boolean
-
-    private var isStarted = false
-    private var maxTime: Int = 60
-        get() = field
+    var isStarted = false
+        private set
+    var maxTime: Int = 60
         set(value) {
-            if (!isStarted) field = value
+            if (!isStarted) {
+                field = value
+                time = value
+            }
         }
-    private var time: Int
+    var time: Int = 60
+        private set
+
     private val innerView = LayoutInflater.from(context).inflate(R.layout.time_view, this, true)
-    private var listener: (Int, Int, TimeView) -> Unit = { _, _, _ -> }
+    private var timeListener: (Int, Int, TimeView) -> Unit = { _, _, _ -> }
+    private var clickListener: (Int) -> Unit = { }
 
     private var timer: CountDownTimer? = null
     private var lastTime: Int
@@ -33,7 +39,12 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
 
     init {
         backgroundPaint.color = Color.parseColor("#29B6F6")
-        backgroundPaint.setShadowLayer(dp(4).toFloat(), 0f, dp(2).toFloat(), Color.parseColor("#7d7d7d7d"))
+        backgroundPaint.setShadowLayer(
+            dp(4).toFloat(),
+            0f,
+            dp(2).toFloat(),
+            Color.parseColor("#7d7d7d7d")
+        )
 
         elevation = 2f
         setWillNotDraw(false)
@@ -45,7 +56,7 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
             0, 0
         ).apply {
             try {
-                isLock = getBoolean(R.styleable.TimeView_lock, false)
+                isLock = getBoolean(R.styleable.TimeView_lock, true)
                 maxTime = getInteger(R.styleable.TimeView_max_time, 60)
                 time = getInteger(R.styleable.TimeView_time, maxTime)
                 lastTime = time
@@ -54,9 +65,11 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
             }
         }
 
-        innerView.time_view_lock.drawable.alpha = 128
+        innerView.time_view_lock.drawable.alpha = 255
+        innerView.time_view_text.visibility = View.GONE
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     fun start() {
         isLock = false
 
@@ -65,16 +78,17 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
             override fun onTick(millisUntilFinished: Long) {
                 time = ceil(millisUntilFinished / 1000.0).toInt()
 
-                innerView.time_view_image.setImageBitmap(drawLeftTime((millisUntilFinished / 1000f) / maxTime.toFloat() * 100f))
+                 innerView.time_view_image.setImageBitmap(drawLeftTime((millisUntilFinished / 1000f) / maxTime.toFloat() * 100f))
                 innerView.time_view_text.text = time.toString()
 
                 if (time == 1) {
                     innerView.time_view_text.alpha = (millisUntilFinished / 1000f)
-                    innerView.time_view_lock.drawable.alpha = ((1 - millisUntilFinished / 1000f) * 127 + 128).toInt()
+                    innerView.time_view_lock.drawable.alpha =
+                        ((1 - millisUntilFinished / 1000f) * 127 + 128).toInt()
                 }
 
                 if (time != lastTime) {
-                    listener(time, maxTime, timeView)
+                    timeListener(time, maxTime, timeView)
 
                     lastTime = time
                 }
@@ -83,17 +97,21 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
             override fun onFinish() {
                 innerView.time_view_image.setImageDrawable(null)
                 innerView.time_view_text.visibility = View.GONE
-                innerView.time_view_lock.visibility = View.VISIBLE
 
                 innerView.time_view_lock.drawable.alpha = 255
                 (innerView.time_view_lock.drawable as AnimatedVectorDrawable).start()
 
                 isStarted = false
-                listener(0, maxTime, timeView)
+                timeListener(0, maxTime, timeView)
             }
         }
 
-        val drawable = timeView.resources.getDrawable(R.drawable.ic_lock_open_animated, context.theme) as AnimatedVectorDrawable
+        innerView.time_view_text.visibility = View.VISIBLE
+
+        val drawable = timeView.resources.getDrawable(
+            R.drawable.ic_lock_open_animated,
+            context.theme
+        ) as AnimatedVectorDrawable
         drawable.alpha = 128
         innerView.time_view_lock.setImageDrawable(drawable)
 
@@ -101,24 +119,42 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
         timer?.start()
     }
 
-    fun setOnTimeListener(listener: (Int, Int, TimeView) -> Unit) {
-        this.listener = listener
+    fun setOnTimeListener(onTimeListener: (Int, Int, TimeView) -> Unit) {
+        this.timeListener = onTimeListener
+    }
+
+    fun setOnClickListener(onClickListener: (Int) -> Unit) {
+        this.clickListener = onClickListener
+
+        this.innerView.setOnClickListener {
+            this.clickListener(this.time)
+        }
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
         canvas?.drawCircle(
             (width / 2).toFloat(),
             (height / 2).toFloat(),
             (width / 2 - dp(4)).toFloat(),
             backgroundPaint
         )
+
+        if (isLock && innerView.time_view_image.drawable == null) {
+            innerView.time_view_image.setImageBitmap(drawLeftTime(100f))
+        }
     }
 
-    private fun drawLeftTime(percent: Float): Bitmap {
+    private fun drawLeftTime(
+        percent: Float,
+        initWidth: Int? = null,
+        initHeight: Int? = null
+    ): Bitmap {
+        val width = initWidth ?: this.measuredWidth
+        val height = initHeight ?: this.measuredHeight
+
         val bitmap =
-            Bitmap.createBitmap(this.measuredWidth - dp(8), this.measuredHeight - dp(8), Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(width - dp(8), height - dp(8), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
         val paint = Paint()
@@ -127,7 +163,12 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
         paint.color = Color.parseColor("#FFFFFF")
 
         canvas.drawArc(
-            RectF(dp(8).toFloat(), dp(8).toFloat(), this.measuredWidth - dp(16).toFloat(), this.measuredHeight - dp(16).toFloat()),
+            RectF(
+                dp(8).toFloat(),
+                dp(8).toFloat(),
+                width - dp(16).toFloat(),
+                height - dp(16).toFloat()
+            ),
             -90f,
             3.6f * percent,
             false,

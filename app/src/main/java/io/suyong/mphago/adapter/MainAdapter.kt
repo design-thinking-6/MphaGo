@@ -33,9 +33,7 @@ class MainAdapter(private val context: Context) : RecyclerView.Adapter<MainHolde
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size;
-    }
+    override fun getItemCount(): Int = list.size
 }
 
 class MainHolder(private val root: View) : RecyclerView.ViewHolder(root) {
