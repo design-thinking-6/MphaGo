@@ -69,8 +69,8 @@ class LoginActivity : AppCompatActivity() {
             {
                 val intent = Intent(this, MainActivity::class.java)
 
-                intent.putExtra("id", id)
-                intent.putExtra("password", password)
+                NetworkManager.id = id
+                NetworkManager.password = password
 
                 startActivity(intent)
             },

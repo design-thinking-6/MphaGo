@@ -13,20 +13,21 @@ object NetworkManager {
     const val SERVER_URL = "http://10.0.2.2:3000"
     const val IMAGE_SERVER_URL = "http://mphago.suyong.me/images/"
 
+    var id: String = ""
+    var password: String = ""
+
     private var errorCallback: (any: Exception) -> Unit = {}
     private var queue: RequestQueue? = null
-
-    private var id: String = ""
-    private var password: String = ""
 
     enum class Event(val event: String) {
         ERROR("error")
     }
 
-    fun request(method: Int, url: String, jsonObject: JSONObject?, func: (response: Any?) -> Unit, error: (error: Exception) -> Unit) {
+    fun request(method: Int, url: String, jsonObject: JSONObject?, func: (response: JSONObject?) -> Unit, error: (error: Exception) -> Unit) {
         queue?.let {
             val request = when (method) {
-                Request.Method.POST -> JsonObjectRequest(
+                Request.Method.POST or Request.Method.PATCH -> JsonObjectRequest(
+                    method,
                     "$SERVER_URL/$url",
                     jsonObject,
                     func,
@@ -35,9 +36,10 @@ object NetworkManager {
                         error(it)
                     }
                 )
-                else -> StringRequest(
+                else -> JsonObjectRequest(
                     method,
                     "$SERVER_URL/$url",
+                    null,
                     func,
                     {
                         errorCallback(it)

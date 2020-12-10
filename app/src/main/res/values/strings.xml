@@ -1,27 +1,23 @@
 <resources>
     <string name="app_name">MphaGo</string>
-    <string name="title_activity_setting" translatable="false">SettingActivity</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header" translatable="false">Messages</string>
-    <string name="sync_header" translatable="false">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title" translatable="false">Your signature</string>
-    <string name="reply_title" translatable="false">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title" translatable="false">Sync email periodically</string>
-    <string name="attachment_title" translatable="false">Download incoming attachments</string>
-    <string name="attachment_summary_on" translatable="false">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off" translatable="false">Only download attachments when manually requested</string>
     <string name="id">ID</string>
-    <string name="password">PASSWORD</string>
+    <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="nickname">NICKNAME</string>
+    <string name="nickname">Nickname</string>
     <string name="not_be_null">This text box must be not null</string>
     <string name="login_failed">Login failed</string>
     <string name="register_failed">Register failed</string>
+    <string name="search">Search</string>
+    <string name="account_setting">Account</string>
+    <string name="short_message">Short message</string>
+    <string name="information">Information</string>
+    <string name="image">Profile image</string>
+    <string name="insert_photo">Insert photo url</string>
 </resources>

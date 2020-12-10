@@ -9,4 +9,10 @@
     <string name="not_be_null">이 칸은 무조건 채워야 합니다.</string>
     <string name="login_failed">로그인에 실패하였습니다</string>
     <string name="register_failed">회원가입에 실패하였습니다</string>
+    <string name="search">검색</string>
+    <string name="account_setting">계정 설정</string>
+    <string name="short_message">"자기 소개 "</string>
+    <string name="information">정보</string>
+    <string name="image">프로필 사진</string>
+    <string name="insert_photo">프로필 사진의 링크를 넣어주세요</string>
 </resources>

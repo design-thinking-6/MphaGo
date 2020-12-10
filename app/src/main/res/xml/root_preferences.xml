@@ -1,34 +1,46 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="@string/account_setting">
 
         <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
+            android:icon="@drawable/ic_person"
+            app:key="nickname"
+            app:title="@string/nickname"
             app:useSimpleSummaryProvider="true" />
 
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
+        <EditTextPreference
+            android:icon="@drawable/ic_secret"
+            app:key="password"
+            app:summary=""
+            app:title="@string/password" />
+
+        <EditTextPreference
+            android:icon="@drawable/ic_message"
+            app:key="short_message"
+            app:title="@string/short_message"
             app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+            android:icon="@drawable/ic_photo"
+            app:key="photo"
+            app:title="@string/image"
+            app:summary="@string/insert_photo" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="@string/information">
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+        <Preference
+            android:icon="@drawable/ic_info"
+            app:key="information"
+            app:title="제작"
+            app:summary="경희대학교 디자인적 사고 03분반 6조 성사 "/>
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+        <Preference
+            android:icon="@drawable/ic_help"
+            app:key="report"
+            app:title="문의"
+            app:summary="tlasy2205@gmail.com"/>
 
     </PreferenceCategory>
 
