@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MphaGo"
         android:usesCleartextTraffic="true">
+        <activity android:name=".SearchResultActivity"></activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingActivity" />
-        <activity android:name=".StudyActivity">
-        </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".StudyActivity"></activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

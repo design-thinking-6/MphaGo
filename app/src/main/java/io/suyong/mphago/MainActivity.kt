@@ -59,6 +59,14 @@ class MainActivity : AppCompatActivity() {
         )
         mainAdapter.list.add(RecommandType("공지사항"))
         mainAdapter.notifyDataSetChanged()
+
+        button_search.setOnClickListener {
+            val intent = Intent(this, SearchResultActivity::class.java)
+
+            intent.putExtra("search", edit_text_search.text.toString())
+
+            startActivity(intent)
+        }
     }
 
     private fun createCodeByLayout(code: String): ViewGroup {

@@ -12,7 +12,7 @@ import org.json.JSONObject
 import java.lang.Exception
 
 object NetworkManager {
-    const val SERVER_URL = "http://10.0.2.2:3000"
+    const val SERVER_URL = "http://mphago.suyong.me"
     const val IMAGE_SERVER_URL = "http://mphago.suyong.me/images/"
 
     var id: String = ""

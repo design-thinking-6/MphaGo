@@ -21,4 +21,5 @@
     <string name="ok">확인</string>
     <string name="cancel">취소</string>
     <string name="wrong_answer">잘못된 정답입니다</string>
+    <string name="difficulty">난이도: %s</string>
 </resources>
