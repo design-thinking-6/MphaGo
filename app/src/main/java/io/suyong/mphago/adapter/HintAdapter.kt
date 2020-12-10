@@ -1,11 +1,14 @@
 package io.suyong.mphago.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.suyong.mphago.R
+import io.suyong.mphago.TimeView
 import kotlinx.android.synthetic.main.item_hint.view.*
 
 class HintAdapter(val context: Context) : RecyclerView.Adapter<HintViewHolder>() {
@@ -15,8 +18,11 @@ class HintAdapter(val context: Context) : RecyclerView.Adapter<HintViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HintViewHolder {
         val layout = LayoutInflater.from(context).inflate(R.layout.item_hint, parent, false)
+        val holder = HintViewHolder(layout)
 
-        return HintViewHolder(layout)
+        holder.hintText.visibility = View.GONE
+
+        return holder
     }
 
     override fun onBindViewHolder(holder: HintViewHolder, position: Int) {
@@ -26,8 +32,12 @@ class HintAdapter(val context: Context) : RecyclerView.Adapter<HintViewHolder>()
         holder.timeView.setOnTimeListener { time, _, _ ->
             if (time == 0) listener(position)
         }
-
-        if (position == 0) holder.timeView.start()
+        holder.timeView.setOnClickListener {
+            if (it == 0) {
+                holder.timeView.setLock(holder.hintText.visibility == View.VISIBLE)
+                holder.hintText.visibility = if (holder.hintText.visibility == View.GONE) View.VISIBLE else View.GONE
+            }
+        }
 
         holder.hintTitle.text = item.title
         holder.hintText.text = item.text
@@ -41,7 +51,7 @@ class HintAdapter(val context: Context) : RecyclerView.Adapter<HintViewHolder>()
 }
 
 class HintViewHolder(val root: View) : RecyclerView.ViewHolder(root) {
-    val timeView = root.hint_time
-    val hintTitle = root.hint_title
-    val hintText = root.hint_text
+    val timeView: TimeView = root.hint_time
+    val hintTitle: TextView = root.hint_title
+    val hintText: TextView = root.hint_text
 }

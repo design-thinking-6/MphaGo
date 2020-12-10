@@ -45,6 +45,7 @@ class SettingActivity : AppCompatActivity() {
             null,
             { json ->
                 json?.let {
+                    it as JSONObject
                     val nickname = it.getString("nickname") ?: getString(R.string.nickname)
                     val password = it.getString("password") ?: getString(R.string.password)
                     val shortMessage = it.getJSONObject("profile").getString("shortMessage") ?: getString(R.string.short_message)
@@ -73,6 +74,7 @@ class SettingActivity : AppCompatActivity() {
         nicknamePreference?.text = nickname
         passwordPreference?.text = password
         shortMessagePreference?.text = shortMessage
+        photoPreference?.text = url
 
         nicknamePreference?.setOnPreferenceChangeListener { _, newValue ->
             requestEditSetting("nickname", newValue.toString())

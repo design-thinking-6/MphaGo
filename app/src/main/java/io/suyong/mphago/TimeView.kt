@@ -16,6 +16,7 @@ import kotlin.math.roundToInt
 
 class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
     var isLock: Boolean
+        private set
     var isStarted = false
         private set
     var maxTime: Int = 60
@@ -78,7 +79,7 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
             override fun onTick(millisUntilFinished: Long) {
                 time = ceil(millisUntilFinished / 1000.0).toInt()
 
-                 innerView.time_view_image.setImageBitmap(drawLeftTime((millisUntilFinished / 1000f) / maxTime.toFloat() * 100f))
+                innerView.time_view_image.setImageBitmap(drawLeftTime((millisUntilFinished / 1000f) / maxTime.toFloat() * 100f))
                 innerView.time_view_text.text = time.toString()
 
                 if (time == 1) {
@@ -97,10 +98,10 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
             override fun onFinish() {
                 innerView.time_view_image.setImageDrawable(null)
                 innerView.time_view_text.visibility = View.GONE
-
                 innerView.time_view_lock.drawable.alpha = 255
-                (innerView.time_view_lock.drawable as AnimatedVectorDrawable).start()
 
+                time = 0
+                lastTime = 0
                 isStarted = false
                 timeListener(0, maxTime, timeView)
             }
@@ -126,9 +127,23 @@ class TimeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context
     fun setOnClickListener(onClickListener: (Int) -> Unit) {
         this.clickListener = onClickListener
 
+        this.innerView.isClickable = true
         this.innerView.setOnClickListener {
             this.clickListener(this.time)
         }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun setLock(lock: Boolean) {
+        val drawable = this.resources.getDrawable(
+            if (lock) R.drawable.ic_lock_close_animated
+            else R.drawable.ic_lock_open_animated,
+            context.theme
+        ) as AnimatedVectorDrawable
+        drawable.start()
+        innerView.time_view_lock.setImageDrawable(drawable)
+
+        isLock = lock
     }
 
     override fun onDraw(canvas: Canvas?) {

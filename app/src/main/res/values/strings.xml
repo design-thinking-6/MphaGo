@@ -20,4 +20,10 @@
     <string name="information">Information</string>
     <string name="image">Profile image</string>
     <string name="insert_photo">Insert photo url</string>
+    <string name="empty">Empty</string>
+    <string name="answer">Answer</string>
+    <string name="correct_answer">Correct a question</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="wrong_answer">Wrong answer</string>
 </resources>

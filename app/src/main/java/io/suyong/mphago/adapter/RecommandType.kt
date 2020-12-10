@@ -1,5 +1,5 @@
 package io.suyong.mphago.adapter
 
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.view.ViewGroup
 
-data class RecommandType(val title: String, val accept: String? = null, val layout: ConstraintLayout? = null)
+data class RecommandType(val title: String, var accept: String? = null, var layouts: MutableList<ViewGroup> = mutableListOf())

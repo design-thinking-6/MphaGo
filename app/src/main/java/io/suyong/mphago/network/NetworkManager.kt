@@ -3,9 +3,11 @@ package io.suyong.mphago.network
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.Exception
 
@@ -23,13 +25,13 @@ object NetworkManager {
         ERROR("error")
     }
 
-    fun request(method: Int, url: String, jsonObject: JSONObject?, func: (response: JSONObject?) -> Unit, error: (error: Exception) -> Unit) {
+    fun request(method: Int, url: String, jsonObject: Any?, func: (response: Any?) -> Unit, error: (error: Exception) -> Unit, isArray: Boolean = false) {
         queue?.let {
-            val request = when (method) {
-                Request.Method.POST or Request.Method.PATCH -> JsonObjectRequest(
+            val request = when (isArray) {
+                true -> JsonArrayRequest(
                     method,
                     "$SERVER_URL/$url",
-                    jsonObject,
+                    jsonObject as JSONArray?,
                     func,
                     {
                         errorCallback(it)
@@ -39,7 +41,7 @@ object NetworkManager {
                 else -> JsonObjectRequest(
                     method,
                     "$SERVER_URL/$url",
-                    null,
+                    jsonObject as JSONObject?,
                     func,
                     {
                         errorCallback(it)
