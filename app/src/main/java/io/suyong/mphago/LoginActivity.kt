@@ -34,8 +34,6 @@ class LoginActivity : AppCompatActivity() {
             val id = prefernce.getString("id", "")
             val password = prefernce.getString("password", "")
 
-            Log.d("auto login", "$id $password")
-
             login(id ?: "", password ?: "")
         }
 
@@ -87,6 +85,7 @@ class LoginActivity : AppCompatActivity() {
 
                 NetworkManager.id = id
                 NetworkManager.password = password
+                NetworkManager.nickname = (it as JSONObject).getString("nickname")
 
                 val prefernce = getSharedPreferences("io.suyong.mphago.preference", MODE_PRIVATE)
                 prefernce.edit {

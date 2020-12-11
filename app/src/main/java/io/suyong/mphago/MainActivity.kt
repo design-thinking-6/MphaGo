@@ -2,14 +2,11 @@ package io.suyong.mphago
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
@@ -18,6 +15,7 @@ import io.suyong.mphago.adapter.MainAdapter
 import io.suyong.mphago.adapter.RecommandType
 import io.suyong.mphago.network.NetworkManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_notice.view.*
 import kotlinx.android.synthetic.main.layout_recommand.view.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -58,7 +56,28 @@ class MainActivity : AppCompatActivity() {
             },
             true
         )
-        mainAdapter.list.add(RecommandType("공지사항"))
+
+        val notice = RecommandType("공지사항")
+        NetworkManager.request(
+            Request.Method.GET,
+            "v1/notices",
+            null,
+            {
+                val array = it as JSONArray
+
+                for (i in array.length() - 1 downTo(0)) {
+                    val title = (array[i] as JSONObject).getString("title")
+                    val content = (array[i] as JSONObject).getString("content")
+
+                    notice.layouts.add(createNotice(title, content))
+                }
+            },
+            {
+
+            },
+            true
+        )
+        mainAdapter.list.add(notice)
         mainAdapter.notifyDataSetChanged()
 
         button_search.setOnClickListener {
@@ -68,6 +87,15 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
+    }
+
+    private fun createNotice(title: String, content: String): ViewGroup {
+        val layout = LayoutInflater.from(this).inflate(R.layout.layout_notice, null, false)
+
+        layout.notice_title.text = title
+        layout.notice_content.text = content
+
+        return layout as ConstraintLayout
     }
 
     private fun createCodeByLayout(code: String): ViewGroup {

@@ -50,4 +50,16 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="@string/admin"
+        app:key="admin"
+        app:isPreferenceVisible="false">
+
+        <Preference
+            android:icon="@drawable/ic_notification"
+            app:key="notice"
+            app:title="공지사항"
+            app:summary="공지사항 작성하기"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

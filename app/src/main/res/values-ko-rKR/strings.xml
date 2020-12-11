@@ -22,4 +22,8 @@
     <string name="cancel">취소</string>
     <string name="wrong_answer">잘못된 정답입니다</string>
     <string name="difficulty">난이도: %s</string>
+    <string name="admin">관리자</string>
+    <string name="upload_success">성공적으로 업로드 되었습니다.</string>
+    <string name="title">타이틀</string>
+    <string name="content">내용</string>
 </resources>

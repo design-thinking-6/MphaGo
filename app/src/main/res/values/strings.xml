@@ -27,4 +27,8 @@
     <string name="cancel">Cancel</string>
     <string name="wrong_answer">Wrong answer</string>
     <string name="difficulty">Difficulty: %s</string>
+    <string name="admin">Admin</string>
+    <string name="upload_success">Upload success</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
 </resources>

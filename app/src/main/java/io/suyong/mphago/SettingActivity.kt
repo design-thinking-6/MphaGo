@@ -1,22 +1,32 @@
 package io.suyong.mphago
 
+import android.app.ActionBar
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.view.marginLeft
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.android.volley.Request
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.dialog.MaterialDialogs
 import io.suyong.mphago.network.NetworkManager
 import kotlinx.android.synthetic.main.activity_setting.*
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 class SettingActivity : AppCompatActivity() {
-    val settingFragment = SettingsFragment()
+    private val settingFragment = SettingsFragment()
+    private var count = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +83,14 @@ class SettingActivity : AppCompatActivity() {
         )
     }
 
+    private fun adminPanel(isShow: Boolean = false) {
+        val adminPreferences = settingFragment.findPreference<PreferenceCategory>("admin")
+        adminPreferences?.isVisible = isShow
+    }
+
     private fun init(nickname: String, password: String, shortMessage: String, url: String) {
+        adminPanel()
+
         collapsingToolbar.title = nickname
         text_nickname.text = nickname
         text_short_message.text = shortMessage
@@ -83,6 +100,8 @@ class SettingActivity : AppCompatActivity() {
         val shortMessagePreference = settingFragment.findPreference<EditTextPreference>("short_message")
         val photoPreference = settingFragment.findPreference<EditTextPreference>("photo")
         val logoutPreference = settingFragment.findPreference<Preference>("logout")
+        val informationPreference = settingFragment.findPreference<Preference>("information")
+        val noticePreference = settingFragment.findPreference<Preference>("notice")
 
         nicknamePreference?.text = nickname
         passwordPreference?.text = password
@@ -127,10 +146,62 @@ class SettingActivity : AppCompatActivity() {
             true
         }
 
+        noticePreference?.setOnPreferenceClickListener {
+            val layout = LinearLayout(this)
+            val titleEdit = EditText(this)
+            val contentEdit = EditText(this)
+
+            titleEdit.width = LinearLayout.LayoutParams.MATCH_PARENT
+            titleEdit.hint = getString(R.string.title)
+            contentEdit.width = LinearLayout.LayoutParams.MATCH_PARENT
+            contentEdit.hint = getString(R.string.content)
+
+            layout.orientation = LinearLayout.VERTICAL
+            layout.addView(titleEdit)
+            layout.addView(contentEdit)
+
+            MaterialAlertDialogBuilder(this)
+                .setTitle("공지사항")
+                .setView(layout)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    val json = JSONObject()
+
+                    json.put("title", titleEdit.text.toString())
+                    json.put("content", contentEdit.text.toString())
+
+                    NetworkManager.request(
+                        Request.Method.POST,
+                        "v1/notices/${NetworkManager.id}/${NetworkManager.password}",
+                        json,
+                        {
+                            Toast.makeText(this, getString(R.string.upload_success), Toast.LENGTH_SHORT).show()
+                        },
+                        {}
+                    )
+                }.show()
+
+            true
+        }
+
         Glide
             .with(this)
             .load(url)
             .into(image_profile)
+
+        NetworkManager.request(
+            Request.Method.GET,
+            "v1/users/${NetworkManager.id}/${NetworkManager.password}",
+            null,
+            {
+                val json = it as JSONObject
+                val isAdmin = json.getBoolean("isAdmin")
+
+                adminPanel(isAdmin)
+            },
+            {
+
+            }
+        )
     }
 
     private fun requestEditSetting(key: String, value: String, func: (() -> Unit)? = null) {
@@ -151,6 +222,8 @@ class SettingActivity : AppCompatActivity() {
             }
         )
     }
+
+    private fun dp(dp: Int) = (dp * resources.displayMetrics.density).roundToInt()
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

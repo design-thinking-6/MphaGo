@@ -17,6 +17,7 @@ object NetworkManager {
 
     var id: String = ""
     var password: String = ""
+    var nickname: String = ""
 
     private var errorCallback: (any: Exception) -> Unit = {}
     private var queue: RequestQueue? = null
