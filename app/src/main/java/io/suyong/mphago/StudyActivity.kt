@@ -62,9 +62,10 @@ class StudyActivity : AppCompatActivity() {
                 it as JSONObject
                 val hints = it.get("hints") as JSONArray
 
+                Log.d("type", it.getString("type"))
                 init(hints, code)
                 initBottomSheet(
-                    if (it.get("type") == "1") AnswerType.SUBJECTIVE else AnswerType.OBJECTIVE,
+                    if (it.getString("type") == "1") AnswerType.SUBJECTIVE else AnswerType.OBJECTIVE,
                     it.getString("answer")
                 )
             },

@@ -2,6 +2,7 @@ package io.suyong.mphago
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -23,6 +24,8 @@ import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
+    private var mainAdapter: MainAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,32 +33,28 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.setLogo(R.drawable.ic_ring_padding)
 
-        val mainAdapter = MainAdapter(this)
+        mainAdapter = MainAdapter(this)
         mainRecyclerView.adapter = mainAdapter
         mainRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        NetworkManager.request(
-            Request.Method.GET,
-            "v1/questions/${NetworkManager.id}/${NetworkManager.password}/recommand",
-            null,
-            {
-                val result = RecommandType("추천 문제")
-                val array = it as JSONArray
+        init()
 
-                for (i in 0 until array.length()) {
-                    val code = (array[i] as JSONObject).get("code").toString()
+        button_search.setOnClickListener {
+            val intent = Intent(this, SearchResultActivity::class.java)
 
-                    result.layouts.add(createCodeByLayout(code))
-                }
+            intent.putExtra("search", edit_text_search.text.toString())
 
-                mainAdapter.list.add(result)
-                mainAdapter.notifyDataSetChanged()
-            },
-            {
+            startActivity(intent)
+        }
+    }
 
-            },
-            true
-        )
+    override fun onResume() {
+        init()
+        super.onResume()
+    }
+
+    private fun init() {
+        mainAdapter?.list?.clear()
 
         val notice = RecommandType("공지사항")
         NetworkManager.request(
@@ -65,28 +64,46 @@ class MainActivity : AppCompatActivity() {
             {
                 val array = it as JSONArray
 
-                for (i in array.length() - 1 downTo(0)) {
-                    val title = (array[i] as JSONObject).getString("title")
-                    val content = (array[i] as JSONObject).getString("content")
+                for (i in array.length() downTo 1) {
+                    val title = (array[i - 1] as JSONObject).getString("title")
+                    val content = (array[i - 1] as JSONObject).getString("content")
 
                     notice.layouts.add(createNotice(title, content))
                 }
+
+                mainAdapter?.notifyDataSetChanged()
             },
             {
 
             },
             true
         )
-        mainAdapter.list.add(notice)
-        mainAdapter.notifyDataSetChanged()
+        mainAdapter?.list?.add(notice)
+        mainAdapter?.notifyDataSetChanged()
 
-        button_search.setOnClickListener {
-            val intent = Intent(this, SearchResultActivity::class.java)
+        val result = RecommandType("추천 문제")
+        NetworkManager.request(
+            Request.Method.GET,
+            "v1/questions/${NetworkManager.id}/${NetworkManager.password}/recommand",
+            null,
+            {
+                val array = it as JSONArray
 
-            intent.putExtra("search", edit_text_search.text.toString())
+                for (i in 0 until array.length()) {
+                    val code = (array[i] as JSONObject).get("code").toString()
 
-            startActivity(intent)
-        }
+                    result.layouts.add(createCodeByLayout(code))
+                }
+
+                mainAdapter?.notifyDataSetChanged()
+            },
+            {
+
+            },
+            true
+        )
+        mainAdapter?.list?.add(result)
+        mainAdapter?.notifyDataSetChanged()
     }
 
     private fun createNotice(title: String, content: String): ViewGroup {

@@ -49,7 +49,8 @@ class SearchResultActivity : AppCompatActivity() {
                     val number = code.substring(8, 10).toInt()
                     val type = code.substring(10, 11)
 
-                    if (search.contains(year) || search.contains(number.toString()) || search.contains(type)) {
+                    if (search.contains(year) || search.contains(number.toString()) || search.contains(type) ||
+                        "${year}학년도 대학수학능력평가 ${if (type == "A") "가" else "나"}형 ${number}번 문제".contains(search)) {
                         adapter?.list?.add(
                             SearchResult(
                                 obj.getString("code"),
