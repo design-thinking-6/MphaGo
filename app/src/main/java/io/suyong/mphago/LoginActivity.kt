@@ -1,13 +1,13 @@
 package io.suyong.mphago
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
 import io.suyong.mphago.network.NetworkManager
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONObject
@@ -25,6 +25,18 @@ class LoginActivity : AppCompatActivity() {
         NetworkManager.init(this)
         NetworkManager.onError {
             Log.d("test", it.toString())
+        }
+
+        val prefernce = getSharedPreferences("io.suyong.mphago.preference", MODE_PRIVATE)
+
+        Log.d("is auto login", "${prefernce.contains("id")} ${prefernce.contains("password")}")
+        if (prefernce.contains("id") and prefernce.contains("password")) {
+            val id = prefernce.getString("id", "")
+            val password = prefernce.getString("password", "")
+
+            Log.d("auto login", "$id $password")
+
+            login(id ?: "", password ?: "")
         }
 
         button_register.setOnClickListener {
@@ -62,16 +74,28 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun login(id: String, password: String) {
+        Log.d("call login", "$id $password")
         NetworkManager.request(
             Request.Method.GET,
             "v1/users/$id/$password",
             null,
             {
                 val intent = Intent(this, MainActivity::class.java)
+                Log.d("call login success", "$id $password")
+
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
                 NetworkManager.id = id
                 NetworkManager.password = password
 
+                val prefernce = getSharedPreferences("io.suyong.mphago.preference", MODE_PRIVATE)
+                prefernce.edit {
+                    this.putString("id", id)
+                    this.putString("password", password)
+                    this.commit()
+                }
+
+                Log.d("call login start", "$id $password")
                 startActivity(intent)
             },
             {

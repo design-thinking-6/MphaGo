@@ -26,6 +26,12 @@
             app:key="photo"
             app:title="@string/image"
             app:summary="@string/insert_photo" />
+
+
+        <Preference
+            app:key="logout"
+            app:title="로그아웃"
+            app:summary=""/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/information">

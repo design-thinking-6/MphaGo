@@ -1,19 +1,16 @@
 package io.suyong.mphago
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.android.volley.Request
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import io.suyong.mphago.network.NetworkManager
 import kotlinx.android.synthetic.main.activity_setting.*
 import org.json.JSONObject
@@ -34,8 +31,19 @@ class SettingActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         updateSettingInfo()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun updateSettingInfo() {
@@ -48,8 +56,12 @@ class SettingActivity : AppCompatActivity() {
                     it as JSONObject
                     val nickname = it.getString("nickname") ?: getString(R.string.nickname)
                     val password = it.getString("password") ?: getString(R.string.password)
-                    val shortMessage = it.getJSONObject("profile").getString("shortMessage") ?: getString(R.string.short_message)
-                    val url = it.getJSONObject("profile").getString("url") ?: "https://dummyimage.com/100x100/000/fff"
+                    val shortMessage =
+                        it.getJSONObject("profile").getString("shortMessage") ?: getString(
+                            R.string.short_message
+                        )
+                    val url = it.getJSONObject("profile").getString("url")
+                        ?: "https://dummyimage.com/100x100/000/fff"
 
                     init(nickname, password, shortMessage, url)
                 }
@@ -70,6 +82,7 @@ class SettingActivity : AppCompatActivity() {
         val passwordPreference = settingFragment.findPreference<EditTextPreference>("password")
         val shortMessagePreference = settingFragment.findPreference<EditTextPreference>("short_message")
         val photoPreference = settingFragment.findPreference<EditTextPreference>("photo")
+        val logoutPreference = settingFragment.findPreference<Preference>("logout")
 
         nicknamePreference?.text = nickname
         passwordPreference?.text = password
@@ -92,6 +105,25 @@ class SettingActivity : AppCompatActivity() {
         }
         photoPreference?.setOnPreferenceChangeListener { _, newValue ->
             requestEditSetting("url", newValue.toString())
+            true
+        }
+        logoutPreference?.setOnPreferenceClickListener {
+
+            val prefernce = getSharedPreferences("io.suyong.mphago.preference", MODE_PRIVATE)
+            prefernce.edit {
+                this.remove("id")
+                this.remove("password")
+                NetworkManager.id = ""
+                NetworkManager.password = ""
+
+                this.commit()
+            }
+            val intent = Intent(this, LoginActivity::class.java)
+
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            startActivity(intent)
+
             true
         }
 

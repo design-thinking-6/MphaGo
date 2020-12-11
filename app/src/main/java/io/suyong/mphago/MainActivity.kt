@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_recommand.view.*
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         Glide
             .with(this)
             .load("${NetworkManager.IMAGE_SERVER_URL}$year/$number$type.png")
+            .override(dp(256))
             .into(layout.image_recommand)
 
         layout.text_recommand.text = "${year}학년도 대학수학능력평가 ${if (type == "A") "가" else "나"}형 ${number}번 문제"
@@ -109,4 +111,6 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun dp(dp: Int) = (dp * resources.displayMetrics.density).roundToInt()
 }

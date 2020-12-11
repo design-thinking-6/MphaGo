@@ -19,6 +19,7 @@ import io.suyong.mphago.network.NetworkManager
 import kotlinx.android.synthetic.main.activity_study.*
 import kotlinx.android.synthetic.main.layout_answer.view.*
 import kotlinx.android.synthetic.main.layout_choice_answer.view.*
+import kotlinx.android.synthetic.main.layout_subjective.*
 import kotlinx.android.synthetic.main.layout_subjective.view.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -63,7 +64,7 @@ class StudyActivity : AppCompatActivity() {
 
                 init(hints, code)
                 initBottomSheet(
-                    if (it.get("type") == 1) AnswerType.OBJECTIVE else AnswerType.SUBJECTIVE,
+                    if (it.get("type") == "1") AnswerType.SUBJECTIVE else AnswerType.OBJECTIVE,
                     it.getString("answer")
                 )
             },
@@ -141,11 +142,13 @@ class StudyActivity : AppCompatActivity() {
                 correct()
             }
         } else {
-            when (child.edit_answer.text.toString()) {
-                answer -> correct()
-                else -> {
-                    child.edit_answer.setText("")
-                    failed()
+            child.button_answer.setOnClickListener {
+                when (child.edit_answer.text.toString()) {
+                    answer -> correct()
+                    else -> {
+                        child.edit_answer.setText("")
+                        failed()
+                    }
                 }
             }
         }

@@ -31,6 +31,7 @@ class SearchResultActivity : AppCompatActivity() {
     }
 
     private fun showSearchResult(search: String) {
+        edit_text_search.setText(search)
         NetworkManager.request(
             Request.Method.GET,
             "v1/questions",
