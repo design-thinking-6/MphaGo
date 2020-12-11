@@ -34,6 +34,18 @@
             app:summary=""/>
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/app">
+
+        <DropDownPreference
+            android:icon="@drawable/ic_darkmode"
+            app:key="darkmode"
+            app:title="앱 테마"
+            app:summary="%s"
+            app:entries="@array/darkmode_entries"
+            app:entryValues="@array/darkmode_entries"/>
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/information">
 
         <Preference

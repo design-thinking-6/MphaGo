@@ -31,4 +31,8 @@
     <string name="upload_success">Upload success</string>
     <string name="title">Title</string>
     <string name="content">Content</string>
+    <string name="app">App</string>
+    <string name="system_default">System default</string>
+    <string name="light_mode">Light mode</string>
+    <string name="dark_mode">Dark mode</string>
 </resources>

@@ -26,4 +26,8 @@
     <string name="upload_success">성공적으로 업로드 되었습니다.</string>
     <string name="title">타이틀</string>
     <string name="content">내용</string>
+    <string name="app">어플리케이션</string>
+    <string name="system_default">시스템 기본값</string>
+    <string name="light_mode">라이트 모드</string>
+    <string name="dark_mode">다크 모드</string>
 </resources>

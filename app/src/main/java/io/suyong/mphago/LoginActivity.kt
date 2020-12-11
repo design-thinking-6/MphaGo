@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import com.android.volley.Request
 import io.suyong.mphago.network.NetworkManager
@@ -23,16 +24,23 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         NetworkManager.init(this)
-        NetworkManager.onError {
-            Log.d("test", it.toString())
+        NetworkManager.onError {}
+
+        val preference = getSharedPreferences("io.suyong.mphago.preference", MODE_PRIVATE)
+
+        if (preference.contains("darkMode")) {
+            val isDarkMode = preference.getBoolean("darkMode", false)
+
+            if (isDarkMode) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
 
-        val prefernce = getSharedPreferences("io.suyong.mphago.preference", MODE_PRIVATE)
-
-        Log.d("is auto login", "${prefernce.contains("id")} ${prefernce.contains("password")}")
-        if (prefernce.contains("id") and prefernce.contains("password")) {
-            val id = prefernce.getString("id", "")
-            val password = prefernce.getString("password", "")
+        if (preference.contains("id") and preference.contains("password")) {
+            val id = preference.getString("id", "")
+            val password = preference.getString("password", "")
 
             login(id ?: "", password ?: "")
         }
